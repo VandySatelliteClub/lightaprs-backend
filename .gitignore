@@ -1,5 +1,5 @@
 # API keys
-keys.txt
+keys.ts
 
 # Ignore node_modules directory
 node_modules/

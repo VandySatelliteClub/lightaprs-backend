@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 import axios from "axios";
 import {Keys} from "./keys";
 
-const FREQ = 1000 * .05 * 60; // update every 10 minutes (3 sec for now)
+const FREQ = 1000 * 5 * 60; // update every 5 minutes
 
 // APRS API info
-let name: string = `A4VU-11`;
-let what: string = `loc`;
-let apikey: string = Keys.APRS_API_KEY;
-let format: string = `json`;
-let url: string = `https://api.aprs.fi/api/get?name=${name}&what=${what}&apikey=${apikey}&format=${format}`;
+const name: string = `A4VU-11`;
+const what: string = `loc`;
+const apikey: string = Keys.APRS_API_KEY;
+const format: string = `json`;
+const url: string = `https://api.aprs.fi/api/get?name=${name}&what=${what}&apikey=${apikey}&format=${format}`;
 
 mongoose.connect(Keys.MONGO_STRING);
 
@@ -30,19 +30,38 @@ const TestData1 = mongoose.model("TestData1", dataSchema);
 // get data from api and add to db
 // need to figure out what APRS returns first
 function updateDB() {
+
+    let alt0 = -1;
+    let lat0 = -1;
+    let long0 = -1;
+    let velx0 = -1;
+    let vely0 = -1;
+    let tempc0 = -1;
+    let message0 = "You shouldn't see this.";
+
+    axios.get(url).then((response) => {
+        
+        // parse the json into variables, process them
+
+    }).catch((error) => {
+
+        console.error('Error:', error);
+        // might want to disconnect db and terminate script?
+    });
+
     const data = new TestData1({
         time: Date.now(),
-        alt: 0,
-        lat: 0,
-        long: 0,
-        velx: 0,
-        vely: 0,
-        tempc: 0,
-        message: "test",
+        alt: alt0,
+        lat: lat0,
+        long: long0,
+        velx: velx0,
+        vely: vely0,
+        tempc: tempc0,
+        message: message0
     });
 
     data.save().then((result) => {
-        console.log(result);
+        console.log(result); // for monitoring
     });
 }
 

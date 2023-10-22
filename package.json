@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon ./index.ts",
     "build": "tsc",
-    "start": "tsc && node ./dist/index.js"
+    "start": "tsc && node ./dist/index.js",
+    "update-db": "tsc && node ./dist/update-db.js"
   },
   "keywords": [],
   "author": "",

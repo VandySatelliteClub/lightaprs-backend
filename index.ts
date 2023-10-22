@@ -1,29 +1,41 @@
-import mongoose from "mongoose";
 import axios from "axios";
 import cors from "cors";
 
 // use own keys.ts file
 import {Keys} from "./keys";
 
+let curMission: boolean;
+
 // current plan: sample data from api every ~10 min, store in db
-// when request is made, return last few data points from db, and somehow update whenever new data available
+// when request is made, return last few data points from db, and update whenever new data available
 
-// testing with a random guy's car :)
+// Endpoints: check if ongoing mission
+//            get last 10 data points by time (first call)
+//            get latest data point (subsequent calls)
 
-//let name: string = `A4VU`;
-let name: string = `KM4PVB-9`
-let what: string = `loc`;
-let apikey: string = Keys.APRS_API_KEY;
-let format: string = `json`;
-let url: string = `https://api.aprs.fi/api/get?name=${name}&what=${what}&apikey=${apikey}&format=${format}`;
-
-axios.get(url).then((response) => {
+// function fetchData() {
     
-    console.log(`Response Status: ${response.status}`);
-    console.log(`Time: ${response.data.entries[0].time}`);
-    console.log(`Latitude: ${response.data.entries[0].lat}`);
-    console.log(`longitude: ${response.data.entries[0].lng}`);
-
-});
+  // MOVE TO update-db.ts 
+  //   axios.get(url)
+  //     .then((response) => {
+  //       console.log(`Response Status: ${response.status}`);
+  //       console.log(`Time: ${response.data.entries[0].time}`);
+  //       console.log(`Latitude: ${response.data.entries[0].lat}`);
+  //       console.log(`Longitude: ${response.data.entries[0].lng}`);
+  //       console.log();
+  //       console.log();
+  //       // After logging the data, wait for 3 seconds and then fetch again
+  //       setTimeout(fetchData, 2000);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error:', error);
+        
+  //       // If there's an error, wait for 3 seconds and then retry
+  //       setTimeout(fetchData, 2000);
+  //     });
+  // }
+  
+  // Start the data fetching process
+  // fetchData();
 
 console.log("end");

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import axios from "axios";
 import {Keys} from "./keys";
 
-const FREQ = 1000 * 5 * 60; // update every 5 minutes
+const FREQ = 1000 * .05 * 60; // update every 5 minutes (.05 is 3 sec)
 
 // APRS API info
 const name: string = `A4VU-11`;
@@ -13,58 +13,64 @@ const url: string = `https://api.aprs.fi/api/get?name=${name}&what=${what}&apike
 
 mongoose.connect(Keys.MONGO_STRING);
 
+// schema used for model
 const dataSchema = new mongoose.Schema({
-    time: Date,
+    curtime: Date,
+    updatetime: Date,
     
     alt: Number,
     lat: Number,
-    long: Number,
-    velx: Number,
-    vely: Number,
+    lng: Number,
+    
+    speed: Number,
+    course: Number,
+    
     tempc: Number,
-
-    message: String,
+    pres: Number,
+    message: String
 })
-const TestData1 = mongoose.model("TestData1", dataSchema);
+// model to use for db operations
+export const TestData2 = mongoose.model("TestData2", dataSchema);
 
-// get data from api and add to db
-// need to figure out what APRS returns first
 function updateDB() {
-
-    let alt0 = -1;
-    let lat0 = -1;
-    let long0 = -1;
-    let velx0 = -1;
-    let vely0 = -1;
-    let tempc0 = -1;
-    let message0 = "You shouldn't see this.";
 
     axios.get(url).then((response) => {
         
-        // parse the json into variables, process them
+        console.log("DB DATA:");
+
+        const vals = response.data.entries[0].comment.split(" "); // access comment data
+
+        const data = new TestData2({
+            curtime: Date.now(),
+            updatetime: new Date(response.data.entries[0].lasttime * 1000), // unix
+            
+            alt: response.data.entries[0].altitude, // meters
+            lat: response.data.entries[0].lat,
+            lng: response.data.entries[0].lng,
+            
+            speed: response.data.entries[0].speed, // km/h
+            course: response.data.entries[0].course, // degrees from north
+            
+            tempc: parseFloat(vals[1]), // celcius
+            pres: parseFloat(vals[2]), // hectopascals
+            message: response.data.entries[0].status
+        });
+        
+        // save to db
+        data.save().then((result) => {
+            console.log(result); // for monitoring
+        });
+
+
 
     }).catch((error) => {
 
         console.error('Error:', error);
         // might want to disconnect db and terminate script?
     });
-
-    const data = new TestData1({
-        time: Date.now(),
-        alt: alt0,
-        lat: lat0,
-        long: long0,
-        velx: velx0,
-        vely: vely0,
-        tempc: tempc0,
-        message: message0
-    });
-
-    data.save().then((result) => {
-        console.log(result); // for monitoring
-    });
 }
 
+console.log(`---------Database is being updated---------`);
 updateDB();
 setInterval(updateDB, FREQ);
 
